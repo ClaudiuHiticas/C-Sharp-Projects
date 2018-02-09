@@ -178,23 +178,27 @@ namespace Login
 
             SqlCommand sqlcom = new SqlCommand();
             sqlcom.Connection = sqlcon;
+            
+             if (pictureBox1.Image == null)
+                MessageBox.Show("Va rugam adaugati o poza");
+            else
+            {
+                byte[] imgData;
+                imgData = File.ReadAllBytes(pictureBox1.ImageLocation);
 
-            byte[] imgData;
-            imgData = File.ReadAllBytes(pictureBox1.ImageLocation);
+                sqlcom.Parameters.AddWithValue("nume", textBox7.Text);
+                sqlcom.Parameters.AddWithValue("pret", textBox8.Text);
+                sqlcom.Parameters.AddWithValue("calorii", textBox9.Text);
+                sqlcom.Parameters.AddWithValue("descriere", textBox10.Text);
+                sqlcom.Parameters.AddWithValue("poza", imgData);
 
-            sqlcom.Parameters.AddWithValue("nume", textBox7.Text);
-            sqlcom.Parameters.AddWithValue("pret", textBox8.Text);
-            sqlcom.Parameters.AddWithValue("calorii", textBox9.Text);
-            sqlcom.Parameters.AddWithValue("descriere", textBox10.Text);
-            sqlcom.Parameters.AddWithValue("poza", imgData);
+                sqlcom.CommandText = "insert into produse(Nume, Pret, Calorii, Descriere, Poza) values(@nume, @pret, @calorii, @descriere, @poza)";
 
-            sqlcom.CommandText = "insert into produse(Nume, Pret, Calorii, Descriere, Poza) values(@nume, @pret, @calorii, @descriere, @poza)";
-
-            sqlcon.Open();
-            sqlcom.ExecuteNonQuery();
-            sqlcon.Close();
-            Application.Restart();
-
+                sqlcon.Open();
+                sqlcom.ExecuteNonQuery();
+                sqlcon.Close();
+                Application.Restart();
+            }
         }
 
         private void iesireToolStripMenuItem_Click(object sender, EventArgs e)
@@ -225,7 +229,8 @@ namespace Login
             sqlcon.Open();
             SqlDataReader reader = sqlcom.ExecuteReader();
             reader.Read();
-
+            
+           
             byte[] poza = reader["poza"]as byte[] ?? null;
             if (poza != null)
             {
